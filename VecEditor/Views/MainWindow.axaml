@@ -1,0 +1,98 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:VecEditor.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:m="using:VecEditor.Models"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="VecEditor.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="VecEditor">
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="*, Auto" ColumnDefinitions="*, Auto">
+
+        <DockPanel Grid.Row="0" Grid.Column="0" Margin="2">
+            <StackPanel DockPanel.Dock="Top">
+                <Button Margin="2" Command="{Binding SaveJsonCommand}">Save Json</Button>
+                <Button Margin="2" Command="{Binding LoadJsonCommand}">Load Json</Button>
+                <ItemsControl ItemsSource="{Binding Factories}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Margin="2" Content="{Binding Factory.Metadata.Name, StringFormat='Create {0}'}" Command="{Binding CreateCommand}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+
+            <ListBox x:Name="list" ItemsSource="{Binding Figures}" Margin="2">
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="vm:GeometryViewModel">
+                        <TextBlock Text="{Binding Name}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+                <ListBox.Styles>
+                    <Style Selector="ListBoxItem" x:DataType="vm:GeometryViewModel">
+                        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
+                    </Style>
+                </ListBox.Styles>
+            </ListBox>
+        </DockPanel>
+
+        <ContentControl Margin="2" Grid.Row="1" Grid.Column="0" Content="{Binding #list.SelectedItem}">
+            <ContentControl.DataTemplates>
+                <DataTemplate x:DataType="vm:GeometryViewModel">
+                    <Grid ShowGridLines="True" ColumnDefinitions="*, *" RowDefinitions="Auto, Auto, Auto, Auto, Auto, *">
+                        <Label Grid.Row="0" Grid.Column="0">Name</Label>
+                        <TextBox Text="{Binding Name}" Grid.Row="0" Grid.Column="1"/>
+                        <Label Grid.Row="1" Grid.Column="0">Color</Label>
+                        <ColorPicker Color="{Binding Color}" Grid.Row="1" Grid.Column="1" />
+                        <Label Grid.Row="2" Grid.Column="0">Center X</Label>
+                        <TextBox Text="{Binding Model.CenterX}" Grid.Row="2" Grid.Column="1" />
+                        <Label Grid.Row="3" Grid.Column="0">Center Y</Label>
+                        <TextBox Text="{Binding Model.CenterY}" Grid.Row="3" Grid.Column="1" />
+                        <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.ColumnSpan="2">
+                            <Button Content="ScaleUp" Command="{Binding ScaleUp}" />
+                            <Button Content="ScaleDown" Command="{Binding ScaleDown}" />
+                            <Button Content="Remove" Command="{Binding Remove}" />
+                        </StackPanel>
+                        <ContentControl Content="{Binding Model}" Grid.Row="5" Grid.ColumnSpan="2" />
+                    </Grid>
+                </DataTemplate>
+
+                <DataTemplate x:DataType="m:CircleModel">
+                    <Grid ShowGridLines="True" ColumnDefinitions="*, *" RowDefinitions="Auto, Auto">
+                        <Label Grid.Row="0" Grid.Column="0">Radius</Label>
+                        <TextBox Text="{Binding Radius}" Grid.Row="0" Grid.Column="1"/>
+                    </Grid>
+                </DataTemplate>
+                
+                <DataTemplate x:DataType="m:RectangleModel">
+                    <Grid ShowGridLines="True" ColumnDefinitions="*, *" RowDefinitions="Auto, Auto, Auto">
+                        <Label Grid.Row="0" Grid.Column="0">Width</Label>
+                        <TextBox Text="{Binding Width}" Grid.Row="0" Grid.Column="1"/>
+                        <Label Grid.Row="1" Grid.Column="0">Height</Label>
+                        <TextBox Text="{Binding Height}" Grid.Row="1" Grid.Column="1"/>
+                    </Grid>
+                </DataTemplate>
+            </ContentControl.DataTemplates>
+        </ContentControl>
+        
+        <Viewbox Stretch="Uniform" Grid.Column="1" Grid.RowSpan="2">
+            <ItemsControl ItemsSource="{Binding Figures}" Width="300" Height="300">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas Background="LightGray" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </Viewbox>
+
+    </Grid>
+
+</Window>
