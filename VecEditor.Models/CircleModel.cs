@@ -1,5 +1,4 @@
 using System.Composition;
-using System.Text.Json.Serialization;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
@@ -21,7 +20,6 @@ public partial class CircleModel : ObservableObject, IGeometryModel
     [NotifyPropertyChangedFor(nameof(Geometry))]
     private float _radius = 10;
 
-    [JsonIgnore]
     public string Geometry => FormattableString.Invariant($"""
                                                            M{CenterX + Radius},{CenterY}
                                                            A{Radius},{Radius},0,1,1,{CenterX - Radius},{CenterY}

@@ -1,5 +1,4 @@
 using System.Composition;
-using System.Text.Json.Serialization;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
@@ -25,7 +24,6 @@ public partial class RectangleModel : ObservableObject, IGeometryModel
     [NotifyPropertyChangedFor(nameof(Geometry))]
     private float _height = 10;
 
-    [JsonIgnore]
     public string Geometry => FormattableString.Invariant($"""
                                                            M{CenterX - Width / 2},{CenterY - Height / 2}
                                                            h{Width} v{Height} h{-Width} z

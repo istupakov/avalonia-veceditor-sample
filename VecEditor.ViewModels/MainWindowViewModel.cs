@@ -21,14 +21,16 @@ public partial class MainWindowViewModel : ViewModelBase
     public RelayCommand LoadJsonCommand { get; }
 
     [ImportMany]
-    private IEnumerable<ExportFactory<IGeometryModel, ModelMetadata>> ModelFactories { get; set; } = [];
+    public IEnumerable<ExportFactory<IGeometryModel, ModelMetadata>> ModelFactories { get; set; } = [];
 
-    private readonly GeometryJsonSerializer<GeometryViewModel> _geometryJsonSerializer = new();
+    [Import]
+    public GeometryJsonSerializer? GeometryJsonSerializer { get; set; }
 
     public MainWindowViewModel()
     {
         var configuration = new ContainerConfiguration()
-            .WithAssembly(typeof(IGeometryModel).Assembly);
+            .WithAssembly(typeof(IGeometryModel).Assembly)
+            .WithAssembly(typeof(GeometryJsonSerializer).Assembly);
         using var container = configuration.CreateContainer();
         container.SatisfyImports(this);
 
@@ -37,8 +39,11 @@ public partial class MainWindowViewModel : ViewModelBase
             Factories.Add(new() { Factory = factory, Main = this });
         }
 
-        SaveJsonCommand = new RelayCommand(() => { _geometryJsonSerializer.SaveJson(JsonFilename, Figures); LoadJsonCommand?.NotifyCanExecuteChanged(); });
-        LoadJsonCommand = new RelayCommand(() => LoadFigures(_geometryJsonSerializer.LoadJson(JsonFilename)), () => File.Exists(JsonFilename));
+        SaveJsonCommand = new RelayCommand(
+            () => { GeometryJsonSerializer?.SaveJson(JsonFilename, Figures); LoadJsonCommand?.NotifyCanExecuteChanged(); });
+        LoadJsonCommand = new RelayCommand(
+            () => LoadFigures(GeometryJsonSerializer?.LoadJson<GeometryViewModel>(JsonFilename)),
+            () => File.Exists(JsonFilename));
     }
 
     private void LoadFigures(IEnumerable<GeometryViewModel>? figures)
