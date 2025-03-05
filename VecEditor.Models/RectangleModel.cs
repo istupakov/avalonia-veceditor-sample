@@ -26,7 +26,10 @@ public partial class RectangleModel : ObservableObject, IGeometryModel
     private float _height = 10;
 
     [JsonIgnore]
-    public string Geometry => $"M{CenterX - Width / 2},{CenterY - Height / 2} h{Width} v{Height} h{-Width} z";
+    public string Geometry => FormattableString.Invariant($"""
+                                                           M{CenterX - Width / 2},{CenterY - Height / 2}
+                                                           h{Width} v{Height} h{-Width} z
+                                                           """);
 
     public void Scale(float ratio)
     {

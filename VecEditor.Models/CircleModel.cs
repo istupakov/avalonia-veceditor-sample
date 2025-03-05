@@ -22,7 +22,11 @@ public partial class CircleModel : ObservableObject, IGeometryModel
     private float _radius = 10;
 
     [JsonIgnore]
-    public string Geometry => $"M{CenterX + Radius},{CenterY} A{Radius},{Radius},0,1,1,{CenterX - Radius},{CenterY} A{Radius},{Radius},0,1,1,{CenterX + Radius},{CenterY} z";
+    public string Geometry => FormattableString.Invariant($"""
+                                                           M{CenterX + Radius},{CenterY}
+                                                           A{Radius},{Radius},0,1,1,{CenterX - Radius},{CenterY}
+                                                           A{Radius},{Radius},0,1,1,{CenterX + Radius},{CenterY} z
+                                                           """);
 
     public void Scale(float ratio)
     {
